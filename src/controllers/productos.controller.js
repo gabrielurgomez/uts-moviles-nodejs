@@ -1,4 +1,5 @@
 import { pool } from '../db.js'
+import { jsPDF } from "jspdf";
 
 export const crearProducto = async (req, res) => {
 
@@ -41,4 +42,31 @@ export const consultarProductoPorID = async (req, res) => {
         console.log(e)
         return res.status(500).json({ message: `Error del servidor, ${e}` })
     }
-} 
+}
+
+
+export const generarReportePDF = async (req, res) => {
+    try {
+        const sql = 'SELECT * FROM productos'
+        const rtaSql = await pool.query(sql, [])
+        let arraRta = rtaSql[0]
+        if (arraRta.length > 0) {
+            const pdf = new jsPDF();
+            let y = 10
+            pdf.text("REPORE PRODUCTOS CREADOS", 10, y);
+            y += 30
+
+            arraRta.forEach(p => {
+                pdf.text(`${p.nombre}, Precio: ${p.precio}`, 10, y);
+                y+=5
+            })
+
+            pdf.save('REPORTE PRODUCTOS.pdf');
+        } else {
+            res.status(204).json()
+        }
+    } catch (e) {
+        console.log(e)
+        return res.status(500).json({ message: `Error del servidor, ${e}` })
+    }
+}
