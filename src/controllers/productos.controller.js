@@ -27,7 +27,7 @@ export const crearProducto = async (req, res) => {
 
 export const consultarProductoPorID = async (req, res) => {
     try {
-        const ids = req.params.id
+        const id = req.params.id
         const sql = 'SELECT * FROM productos WHERE id = ?'
         const datos = [id]
         const rtaSql = await pool.query(sql, datos)
@@ -44,6 +44,42 @@ export const consultarProductoPorID = async (req, res) => {
     }
 }
 
+export const eliminarProducto = async (req, res) => {
+    try {
+        let id = req.params.id;
+        let sql = 'DELETE FROM productos WHERE id = ?';
+        let rtaSql = await pool.query(sql, [id])
+        let rta = rtaSql[0];
+        console.log(rta)
+        if (rta.affectedRows == 1) {
+            res.status(200).json({ message: 'Producto eliminado con exito' })
+        } else {
+            res.status(204).json()
+        }
+    } catch (e) {
+        console.log(e)
+    }
+
+}
+
+export const consultarProductos = async (req, res) => {
+
+    try {
+        let sql = 'SELECT * FROM productos'
+        let rtaMySql = await pool.query(sql, [])
+        let productosEncontrados = rtaMySql[0];        
+
+        if (productosEncontrados.length > 0) {
+            console.log(productosEncontrados)
+            return res.status(200).json(productosEncontrados)
+        } else {
+            return res.status(204).json()
+        }
+    } catch (e) {
+        return res.status(500).json({ message: `Error en el servidor ${e.sqlMessage}` })
+    }
+
+}
 
 export const generarReportePDF = async (req, res) => {
     try {
@@ -58,7 +94,7 @@ export const generarReportePDF = async (req, res) => {
 
             arraRta.forEach(p => {
                 pdf.text(`${p.nombre}, Precio: ${p.precio}`, 10, y);
-                y+=5
+                y += 5
             })
 
             pdf.save('REPORTE PRODUCTOS.pdf');
