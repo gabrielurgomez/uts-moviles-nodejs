@@ -64,10 +64,11 @@ export const eliminarProducto = async (req, res) => {
 
 export const consultarProductos = async (req, res) => {
 
+    console.log('Se consultarán productos...')
     try {
         let sql = 'SELECT * FROM productos'
         let rtaMySql = await pool.query(sql, [])
-        let productosEncontrados = rtaMySql[0];        
+        let productosEncontrados = rtaMySql[0];
 
         if (productosEncontrados.length > 0) {
             console.log(productosEncontrados)
