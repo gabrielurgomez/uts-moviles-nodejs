@@ -1,5 +1,5 @@
 import express from "express";
-import cors from 'cors';
+import cors from 'cors';;
 
 //aca importamos las rutas que creamos en la carpeta routes
 import productoRoutes from './routes/productos.routes.js';
