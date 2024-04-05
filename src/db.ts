@@ -6,7 +6,7 @@ const pool = createPool({
     user: 'root',
     password: process.env.DB_PASSWORD,
     port: 3306,
-    database: 'movilesuts'
+    database: process.env.DB_NAME,
 })
 
 export { pool }

@@ -2,7 +2,7 @@ import express from "express";
 import cors from 'cors';
 
 //aca importamos las rutas que creamos en la carpeta routes
-import productoRoutes from './routes/productos.routes.js';
+import productoRoutes from './routes/productos.routes';
 
 const app = express();
 app.use(cors({ origin: '*' }));

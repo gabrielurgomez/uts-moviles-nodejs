@@ -1,7 +1,8 @@
-import { pool } from '../db.js'
+import { pool } from '../db'
 import { jsPDF } from "jspdf";
+import { Request, Response } from 'express'
 
-export const crearProducto = async (req, res) => {
+export const crearProducto = async (req: Request, res: Response) => {
 
     try {
         let nombre = req.body.nombre;
@@ -13,7 +14,7 @@ export const crearProducto = async (req, res) => {
         let sql = 'INSERT INTO `tienda`.`productos` (`nombre`, `precio`, `marca`) VALUES (?,?,?);'
         let datos = [nombre, precio, marca];
 
-        let rta = await pool.query(sql, datos)
+        let rta: any = await pool.query(sql, datos)
         console.log(rta[0])
 
         if (rta[0].affectedRows == 1) {
@@ -25,13 +26,13 @@ export const crearProducto = async (req, res) => {
     }
 }
 
-export const consultarProductoPorID = async (req, res) => {
+export const consultarProductoPorID = async (req: Request, res: Response) => {
     try {
         const id = req.params.id
         const sql = 'SELECT * FROM productos WHERE id = ?'
         const datos = [id]
         const rtaSql = await pool.query(sql, datos)
-        let arraRta = rtaSql[0]
+        let arraRta: any = rtaSql[0]
         if (arraRta.length > 0) {
             let producto = arraRta[0]
             return res.status(200).json(producto)
@@ -44,12 +45,12 @@ export const consultarProductoPorID = async (req, res) => {
     }
 }
 
-export const eliminarProducto = async (req, res) => {
+export const eliminarProducto = async (req: Request, res: Response) => {
     try {
         let id = req.params.id;
         let sql = 'DELETE FROM productos WHERE id = ?';
         let rtaSql = await pool.query(sql, [id])
-        let rta = rtaSql[0];
+        let rta: any = rtaSql[0];
         console.log(rta)
         if (rta.affectedRows == 1) {
             res.status(200).json({ message: 'Producto eliminado con exito' })
@@ -62,13 +63,13 @@ export const eliminarProducto = async (req, res) => {
 
 }
 
-export const consultarProductos = async (req, res) => {
+export const consultarProductos = async (req: Request, res: Response) => {
 
     console.log('Se consultarán productos...')
     try {
         let sql = 'SELECT * FROM productos'
         let rtaMySql = await pool.query(sql, [])
-        let productosEncontrados = rtaMySql[0];
+        let productosEncontrados: any = rtaMySql[0];
 
         if (productosEncontrados.length > 0) {
             console.log(productosEncontrados)
@@ -76,13 +77,16 @@ export const consultarProductos = async (req, res) => {
         } else {
             return res.status(204).json()
         }
-    } catch (e) {
-        return res.status(500).json({ message: `Error en el servidor ${e.sqlMessage}` })
+    } catch (e: unknown) {
+        if ("sqlMessage" in e && e instanceof Error) {
+            return res.status(500).json({ message: `Error en el servidor ${e.sqlMessage}` })
+        }
+
     }
 
 }
 
-export const generarReportePDF = async (req, res) => {
+export const generarReportePDF = async (req: Request, res: Response) => {
     try {
         const sql = 'SELECT * FROM productos'
         const rtaSql = await pool.query(sql, [])
