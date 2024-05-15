@@ -3,12 +3,10 @@ import { jsPDF } from "jspdf";
 import { Request, Response } from 'express'
 
 export const crearProducto = async (req: Request, res: Response) => {
-
     try {
         let nombre = req.body.nombre;
         let precio = req.body.precio;
         let marca = req.body.marca;
-
         //console.log(`Se recibio el producto de id ${id}, nombre: ${nombre} de marca ${marca}, con precio: ${precio}`)
 
         let sql = 'INSERT INTO `tienda`.`productos` (`nombre`, `precio`, `marca`) VALUES (?,?,?);'
@@ -90,7 +88,7 @@ export const generarReportePDF = async (req: Request, res: Response) => {
     try {
         const sql = 'SELECT * FROM productos'
         const rtaSql = await pool.query(sql, [])
-        let arraRta = rtaSql[0]
+        let arraRta: any = rtaSql[0]
         if (arraRta.length > 0) {
             const pdf = new jsPDF();
             let y = 10
